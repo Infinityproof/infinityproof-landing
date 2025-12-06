@@ -6,9 +6,10 @@ const FORMSPREE_URL = 'https://formspree.io/f/xanrbdzy';
 export default function App() {
   const [currentPage, setCurrentPage] = useState('home');
   const [email, setEmail] = useState('');
-  const [formState, setFormState] = useState('idle'); // idle, submitting, success, error
+  const [formState, setFormState] = useState('idle');
   const [scrollY, setScrollY] = useState(0);
   const [isVisible, setIsVisible] = useState({});
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
@@ -37,7 +38,6 @@ export default function App() {
     setIsVisible({});
   }, [currentPage]);
 
-  // Formspree submission handler
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email) return;
@@ -69,41 +69,38 @@ export default function App() {
     setCurrentPage(page);
   };
 
-  // Official Infinityproof Logo Component
-  const Logo = ({ height = 28, color = '#000000' }) => (
-    <svg height={height} viewBox="0 0 375 60" fill="none" style={{ cursor: 'pointer' }} onClick={() => navigate('home')}>
-      <text x="0" y="42" style={{ fontFamily: 'Inter, sans-serif', fontSize: '28px', fontWeight: 600, letterSpacing: '0.12em', fill: color }}>
+  // Text-only Logo Component with Livvic font
+  const Logo = ({ height = 28, color = '#1a1a1a' }) => (
+    <div 
+      onClick={() => navigate('home')} 
+      style={{ 
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        userSelect: 'none',
+        gap: '0'
+      }}
+    >
+      <span style={{ 
+        fontFamily: "'Livvic', sans-serif", 
+        fontSize: `${height * 0.85}px`, 
+        fontWeight: 600, 
+        letterSpacing: '0.4em', 
+        color: color 
+      }}>
         INFINITY
-      </text>
-      <text x="155" y="42" style={{ fontFamily: 'Inter, sans-serif', fontSize: '28px', fontWeight: 300, letterSpacing: '0.12em', fill: color }}>
+      </span>
+      <span style={{ 
+        fontFamily: "'Livvic', sans-serif", 
+        fontSize: `${height * 0.85}px`, 
+        fontWeight: 300, 
+        letterSpacing: '0.4em', 
+        color: color,
+        opacity: 0.6
+      }}>
         PROOF
-      </text>
-      <g transform="translate(290, 8)">
-        <line x1="4" y1="2" x2="36" y2="2" stroke={color} strokeWidth="2.5" strokeLinecap="round"/>
-        <line x1="4" y1="42" x2="36" y2="42" stroke={color} strokeWidth="2.5" strokeLinecap="round"/>
-        <path d="M8 4 L8 14 L20 22 L8 30 L8 40" stroke={color} strokeWidth="1.8" fill="none"/>
-        <path d="M32 4 L32 14 L20 22 L32 30 L32 40" stroke={color} strokeWidth="1.8" fill="none"/>
-        <line x1="6" y1="40" x2="34" y2="4" stroke={color} strokeWidth="1.5"/>
-        <path d="M20 42 C24 42 28 38 28 34 C28 28 20 24 20 24 C20 24 12 28 12 34 C12 38 16 42 20 42 Z" fill={color}/>
-        <circle cx="10" cy="8" r="1" fill={color}/>
-        <circle cx="30" cy="8" r="1" fill={color}/>
-        <circle cx="10" cy="14" r="1" fill={color}/>
-        <circle cx="30" cy="14" r="1" fill={color}/>
-        <circle cx="14" cy="20" r="0.8" fill={color}/>
-        <circle cx="26" cy="20" r="0.8" fill={color}/>
-      </g>
-    </svg>
-  );
-
-  const HourglassIcon = ({ size = 40, color = 'currentColor' }) => (
-    <svg width={size} height={size * 1.1} viewBox="0 0 40 44" fill="none">
-      <line x1="4" y1="2" x2="36" y2="2" stroke={color} strokeWidth="2.5" strokeLinecap="round"/>
-      <line x1="4" y1="42" x2="36" y2="42" stroke={color} strokeWidth="2.5" strokeLinecap="round"/>
-      <path d="M8 4 L8 14 L20 22 L8 30 L8 40" stroke={color} strokeWidth="1.8" fill="none"/>
-      <path d="M32 4 L32 14 L20 22 L32 30 L32 40" stroke={color} strokeWidth="1.8" fill="none"/>
-      <line x1="6" y1="40" x2="34" y2="4" stroke={color} strokeWidth="1.5"/>
-      <path d="M20 42 C24 42 28 38 28 34 C28 28 20 24 20 24 C20 24 12 28 12 34 C12 38 16 42 20 42 Z" fill={color}/>
-    </svg>
+      </span>
+    </div>
   );
 
   // Navigation Component
@@ -114,18 +111,19 @@ export default function App() {
       left: 0,
       right: 0,
       zIndex: 100,
-      padding: '1.5rem 4rem',
+      padding: '1rem 1.5rem',
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
-      background: scrollY > 50 ? 'rgba(250, 250, 248, 0.95)' : 'transparent',
-      backdropFilter: scrollY > 50 ? 'blur(20px)' : 'none',
+      background: scrollY > 50 || mobileMenuOpen ? 'rgba(250, 250, 248, 0.98)' : 'transparent',
+      backdropFilter: scrollY > 50 || mobileMenuOpen ? 'blur(20px)' : 'none',
       transition: 'all 0.4s ease',
       borderBottom: scrollY > 50 ? '1px solid rgba(0,0,0,0.05)' : 'none'
     }}>
-      <Logo height={24} />
+      <Logo height={20} />
       
-      <div style={{ display: 'flex', gap: '3rem', alignItems: 'center' }}>
+      {/* Desktop Navigation */}
+      <div className="nav-desktop" style={{ display: 'flex', gap: '2.5rem', alignItems: 'center' }}>
         {[
           { label: 'Method', page: 'method' },
           { label: 'Features', page: 'features' },
@@ -164,40 +162,145 @@ export default function App() {
           }}
         >Get Early Access</span>
       </div>
+      
+      {/* Mobile Menu Button */}
+      <div 
+        className="nav-mobile"
+        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        style={{ 
+          display: 'none', 
+          flexDirection: 'column', 
+          gap: '5px', 
+          cursor: 'pointer',
+          padding: '8px'
+        }}
+      >
+        <span style={{ width: '24px', height: '2px', background: '#3D4A28', transition: 'all 0.3s', transform: mobileMenuOpen ? 'rotate(45deg) translateY(7px)' : 'none' }} />
+        <span style={{ width: '24px', height: '2px', background: '#3D4A28', transition: 'all 0.3s', opacity: mobileMenuOpen ? 0 : 1 }} />
+        <span style={{ width: '24px', height: '2px', background: '#3D4A28', transition: 'all 0.3s', transform: mobileMenuOpen ? 'rotate(-45deg) translateY(-7px)' : 'none' }} />
+      </div>
+      
+      {/* Mobile Menu Dropdown */}
+      {mobileMenuOpen && (
+        <div style={{
+          position: 'absolute',
+          top: '100%',
+          left: 0,
+          right: 0,
+          background: 'rgba(250, 250, 248, 0.98)',
+          backdropFilter: 'blur(20px)',
+          padding: '1.5rem',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '1rem',
+          borderBottom: '1px solid rgba(0,0,0,0.05)'
+        }}>
+          {[
+            { label: 'Method', page: 'method' },
+            { label: 'Features', page: 'features' },
+            { label: 'Curriculum', page: 'curriculum' }
+          ].map((item) => (
+            <span 
+              key={item.page}
+              onClick={() => { navigate(item.page); setMobileMenuOpen(false); }}
+              style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: '1rem',
+                color: currentPage === item.page ? '#3D4A28' : '#4a4a4a',
+                cursor: 'pointer',
+                padding: '0.5rem 0'
+              }}
+            >{item.label}</span>
+          ))}
+          <span 
+            onClick={() => {
+              navigate('home');
+              setMobileMenuOpen(false);
+              setTimeout(() => {
+                document.getElementById('enroll')?.scrollIntoView({ behavior: 'smooth' });
+              }, 100);
+            }}
+            style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: '1rem',
+              color: '#fff',
+              background: '#3D4A28',
+              padding: '1rem',
+              borderRadius: '2px',
+              cursor: 'pointer',
+              textAlign: 'center',
+              marginTop: '0.5rem'
+            }}
+          >Get Early Access</span>
+        </div>
+      )}
     </nav>
   );
 
   // Footer Component
   const Footer = () => (
-    <footer style={{
+    <footer className="site-footer" style={{
       padding: '4rem',
       background: '#111',
       borderTop: '1px solid rgba(255,255,255,0.05)'
     }}>
-      <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '2rem' }}>
-        <Logo height={20} color="#fff" />
-        <div style={{ display: 'flex', gap: '2rem' }}>
-          {['Method', 'Features', 'Curriculum'].map((item) => (
-            <span 
-              key={item}
-              onClick={() => navigate(item.toLowerCase())}
-              style={{
-                fontFamily: "'Inter', sans-serif",
-                fontSize: '0.8rem',
-                color: 'rgba(255,255,255,0.5)',
-                cursor: 'pointer',
-                transition: 'color 0.3s'
-              }}
-            >{item}</span>
-          ))}
+      <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+        <div className="footer-grid" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '2rem', marginBottom: '2rem' }}>
+          <Logo height={20} color="#fff" />
+          <div className="footer-links" style={{ display: 'flex', gap: '2rem' }}>
+            {['Method', 'Features', 'Curriculum'].map((item) => (
+              <span 
+                key={item}
+                onClick={() => navigate(item.toLowerCase())}
+                style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: '0.8rem',
+                  color: 'rgba(255,255,255,0.5)',
+                  cursor: 'pointer',
+                  transition: 'color 0.3s'
+                }}
+              >{item}</span>
+            ))}
+          </div>
         </div>
-        <p style={{
-          fontFamily: "'Inter', sans-serif",
-          fontSize: '0.8rem',
-          color: 'rgba(255,255,255,0.4)'
+        
+        <div className="footer-bottom" style={{ 
+          borderTop: '1px solid rgba(255,255,255,0.1)', 
+          paddingTop: '2rem',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+          flexWrap: 'wrap',
+          gap: '2rem'
         }}>
-          © 2025 Infinityproof. Better Decisions for Founders.
-        </p>
+          <div className="impressum-section">
+            <p style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: '0.75rem',
+              color: 'rgba(255,255,255,0.6)',
+              marginBottom: '0.5rem',
+              fontWeight: 500
+            }}>Impressum</p>
+            <p style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: '0.7rem',
+              color: 'rgba(255,255,255,0.4)',
+              lineHeight: 1.8
+            }}>
+              Infinityproof UG (haftungsbeschränkt)<br/>
+              Rauschenbergstr. 4a, 36039 Fulda<br/>
+              HRB 8887, Amtsgericht Fulda<br/>
+              USt-IdNr.: DE370167179
+            </p>
+          </div>
+          <p className="copyright-text" style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: '0.75rem',
+            color: 'rgba(255,255,255,0.4)'
+          }}>
+            © 2025 Infinityproof. Better Decisions for Founders.
+          </p>
+        </div>
       </div>
     </footer>
   );
@@ -218,7 +321,7 @@ export default function App() {
           </p>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} style={{
+        <form onSubmit={handleSubmit} className="cta-form" style={{
           display: 'flex',
           gap: '1rem',
           flexWrap: 'wrap',
@@ -296,14 +399,14 @@ export default function App() {
   const HomePage = () => (
     <>
       {/* Hero Section */}
-      <section className="hero-gradient" style={{
+      <section className="hero-gradient hero-section" style={{
         minHeight: '100vh',
         display: 'flex',
         alignItems: 'center',
         padding: '8rem 4rem 4rem',
         position: 'relative'
       }}>
-        <div style={{
+        <div className="decorative-circle" style={{
           position: 'absolute',
           top: '20%',
           right: '10%',
@@ -314,7 +417,7 @@ export default function App() {
           transform: `translateY(${scrollY * 0.1}px)`
         }} />
         
-        <div style={{ maxWidth: '1400px', margin: '0 auto', width: '100%', display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '4rem', alignItems: 'center' }}>
+        <div className="hero-grid" style={{ maxWidth: '1400px', margin: '0 auto', width: '100%', display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '4rem', alignItems: 'center' }}>
           <div>
             <div className="animate-fadeInUp delay-1" style={{
               fontFamily: "'Inter', sans-serif",
@@ -356,7 +459,7 @@ export default function App() {
               maxWidth: '540px',
               marginBottom: '2.5rem'
             }}>
-              A practical system for high-stakes decisions. Built for entrepreneurs who can't afford expensive consultants—but refuse to rely on gut feeling alone.
+              A practical system for high-stakes decisions—powered by the perfect synergy of human judgment and AI support. Built for entrepreneurs who refuse to rely on gut feeling alone.
             </p>
             
             <div className="animate-fadeInUp delay-4" style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
@@ -379,9 +482,9 @@ export default function App() {
               <span style={{
                 fontFamily: "'Inter', sans-serif",
                 fontSize: '0.8rem',
-                color: '#888'
+                color: '#8B9A46'
               }}>
-                Limited early-bird spots
+                60 days free AI Decision Partner for Early Birds
               </span>
             </div>
           </div>
@@ -403,14 +506,14 @@ export default function App() {
                 textTransform: 'uppercase',
                 marginBottom: '1.5rem',
                 textAlign: 'center'
-              }}>The Approach</p>
+              }}>Human + AI Synergy</p>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 {[
-                  { num: '1', text: 'Set the right scope', desc: 'Make sure you\'re solving the right problem' },
-                  { num: '2', text: 'Identify great options', desc: 'Create alternatives worth choosing from' },
-                  { num: '3', text: 'Evaluate with clarity', desc: 'Think it through without getting stuck' },
-                  { num: '4', text: 'Make it happen', desc: 'Turn your decision into results' }
+                  { num: '1', text: 'Set the right scope', desc: 'You define the problem, AI helps you challenge it' },
+                  { num: '2', text: 'Identify great options', desc: 'You bring expertise, AI expands your thinking' },
+                  { num: '3', text: 'Understand value drivers & risks', desc: 'You know your context, AI structures the analysis' },
+                  { num: '4', text: 'Evaluate with clarity', desc: 'Go beyond intuition with proven methods and AI guidance' }
                 ].map((item, i) => (
                   <div key={i} style={{
                     display: 'flex',
@@ -447,7 +550,7 @@ export default function App() {
                 ))}
               </div>
               
-              <div className="floating-element" style={{
+              <div className="floating-element floating-badge" style={{
                 position: 'absolute',
                 top: '-20px',
                 right: '-20px',
@@ -461,7 +564,7 @@ export default function App() {
                 textTransform: 'uppercase',
                 boxShadow: '0 10px 30px rgba(61, 74, 40, 0.3)'
               }}>
-                + AI Co-Pilot
+                + AI Decision Partner
               </div>
             </div>
           </div>
@@ -469,7 +572,7 @@ export default function App() {
       </section>
 
       {/* Problem Section */}
-      <section style={{ padding: '8rem 4rem', background: '#FFFFFF' }}>
+      <section className="section-padding" style={{ padding: '8rem 4rem', background: '#FFFFFF' }}>
         <div style={{ maxWidth: '900px', margin: '0 auto', textAlign: 'center' }}>
           <p style={{
             fontFamily: "'Inter', sans-serif",
@@ -507,10 +610,81 @@ export default function App() {
 
       <div className="section-divider" style={{ maxWidth: '1200px', margin: '0 auto' }} />
 
+      {/* Why Human + AI Section */}
+      <section className="section-padding" style={{ padding: '6rem 4rem', background: '#FAFAF8' }}>
+        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
+            <p style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: '0.75rem',
+              letterSpacing: '0.3em',
+              color: '#8B9A46',
+              textTransform: 'uppercase',
+              marginBottom: '1.5rem'
+            }}>The Core Principle</p>
+            
+            <h2 style={{
+              fontFamily: "'Cormorant Garamond', serif",
+              fontSize: 'clamp(2rem, 4vw, 2.75rem)',
+              fontWeight: 400,
+              lineHeight: 1.3
+            }}>
+              Neither Human Nor AI Alone—<span style={{ fontStyle: 'italic' }}>Both Together</span>
+            </h2>
+          </div>
+          
+          <div className="three-col-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2rem' }}>
+            {[
+              {
+                title: 'Human Strengths',
+                color: '#3D4A28',
+                items: ['Domain expertise & context', 'Values & priorities', 'Creative leaps', 'Final judgment calls']
+              },
+              {
+                title: 'AI Strengths', 
+                color: '#8B9A46',
+                items: ['Structured analysis', 'Bias detection', 'Option expansion', 'Consistent frameworks']
+              },
+              {
+                title: 'Combined Power',
+                color: '#C4A84B',
+                items: ['Better problem framing', 'Richer alternatives', 'Better analysis', 'More business value']
+              }
+            ].map((col, i) => (
+              <div key={i} style={{
+                padding: '2rem',
+                background: '#fff',
+                borderRadius: '4px',
+                borderTop: `3px solid ${col.color}`
+              }}>
+                <h3 style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: '1rem',
+                  fontWeight: 600,
+                  color: col.color,
+                  marginBottom: '1.5rem'
+                }}>{col.title}</h3>
+                <ul style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: '0.9rem',
+                  lineHeight: 2,
+                  color: '#555',
+                  listStyle: 'none'
+                }}>
+                  {col.items.map((item, j) => (
+                    <li key={j}>→ {item}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Outcomes Section */}
-      <section style={{ padding: '8rem 4rem', background: '#FAFAF8' }}>
+      <section className="section-padding" style={{ padding: '6rem 4rem', background: '#fff' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: '5rem' }}>
+          <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
             <p style={{
               fontFamily: "'Inter', sans-serif",
               fontSize: '0.75rem',
@@ -530,7 +704,7 @@ export default function App() {
             </h2>
           </div>
           
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '3rem' }}>
+          <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '2rem' }}>
             {[
               {
                 num: '01',
@@ -546,25 +720,21 @@ export default function App() {
               },
               {
                 num: '03',
-                title: 'Evaluate with Clarity',
-                outcome: 'Think it through without overthinking',
-                desc: 'Cut through complexity and uncertainty. Know which information actually matters, and use simple tools to compare your options clearly.'
+                title: 'Understand Value Drivers & Risks',
+                outcome: 'Know what moves the needle',
+                desc: 'Identify the key factors that determine success or failure. Separate what you know from what remains uncertain, and focus on the variables that actually matter.'
               },
               {
                 num: '04',
-                title: 'Make It Happen',
-                outcome: 'Turn decisions into results',
-                desc: 'Bridge the gap between deciding and doing. Build commitment before you start, and create conditions that make follow-through inevitable.'
+                title: 'Evaluate with Clarity',
+                outcome: 'Go beyond gut feeling',
+                desc: 'Compare your options against clear criteria—both financial and non-financial. Use proven methods to see trade-offs clearly and decide with confidence.'
               }
             ].map((item, i) => (
               <div 
                 key={i}
-                data-animate
-                id={`outcome-${i}`}
-                className={`feature-card ${isVisible[`outcome-${i}`] ? 'animate-fadeInUp' : ''}`}
+                className="feature-card"
                 style={{ 
-                  opacity: isVisible[`outcome-${i}`] ? 1 : 0,
-                  animationDelay: `${i * 0.15}s`,
                   padding: '2.5rem',
                   borderRadius: '4px',
                   border: '1px solid rgba(0,0,0,0.04)'
@@ -599,7 +769,7 @@ export default function App() {
             ))}
           </div>
           
-          <div style={{ textAlign: 'center', marginTop: '4rem' }}>
+          <div style={{ textAlign: 'center', marginTop: '3rem' }}>
             <span 
               onClick={() => navigate('method')}
               style={{
@@ -633,15 +803,15 @@ export default function App() {
             Everything You Need to <span style={{ color: '#C4A84B', fontStyle: 'italic' }}>Decide with Confidence</span>
           </h2>
           
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '2rem', marginBottom: '3rem' }}>
+          <div className="four-col-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '2rem', marginBottom: '3rem' }}>
             {[
-              { icon: '⚡', label: 'AI Co-Pilot', sub: 'Exclusive web app' },
-              { icon: '📊', label: 'Case Study', sub: 'Real-world example' },
-              { icon: '📋', label: 'Templates', sub: 'Ready to use' },
-              { icon: '🎯', label: '10+ Modules', sub: 'Complete system' }
+              { icon: '⚡', label: 'AI Decision Partner', sub: '60 days free for Early Birds' },
+              { icon: '◉', label: 'Case Study', sub: 'Practical scenario' },
+              { icon: '▤', label: 'Templates', sub: 'Ready to use' },
+              { icon: '◎', label: 'Full Course', sub: 'Complete system' }
             ].map((item, i) => (
               <div key={i} style={{ padding: '1.5rem' }}>
-                <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>{item.icon}</div>
+                <div style={{ fontSize: '1.75rem', marginBottom: '1rem', opacity: 0.9 }}>{item.icon}</div>
                 <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '1rem', fontWeight: 500, marginBottom: '0.25rem' }}>{item.label}</p>
                 <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)' }}>{item.sub}</p>
               </div>
@@ -666,7 +836,7 @@ export default function App() {
 
       {/* Final CTA */}
       <section id="enroll" style={{
-        padding: '10rem 4rem',
+        padding: '8rem 4rem',
         background: '#1a1a1a',
         color: '#fff',
         position: 'relative'
@@ -683,16 +853,12 @@ export default function App() {
         }} />
         
         <div style={{ maxWidth: '700px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 1 }}>
-          <div className="floating-element">
-            <HourglassIcon size={48} color="#fff" />
-          </div>
-          
           <h2 style={{
             fontFamily: "'Cormorant Garamond', serif",
             fontSize: 'clamp(2.5rem, 5vw, 3.5rem)',
             fontWeight: 400,
             lineHeight: 1.2,
-            margin: '3rem 0 1.5rem'
+            marginBottom: '1.5rem'
           }}>
             Your Next Decision<br/>
             <span style={{ color: '#C4A84B', fontStyle: 'italic' }}>Could Change Everything</span>
@@ -703,9 +869,18 @@ export default function App() {
             fontSize: '1.1rem',
             lineHeight: 1.8,
             color: 'rgba(255,255,255,0.7)',
-            marginBottom: '3rem'
+            marginBottom: '1rem'
           }}>
             Join the waitlist for early access and secure your early-bird pricing.
+          </p>
+          
+          <p style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: '0.95rem',
+            color: '#C4A84B',
+            marginBottom: '2.5rem'
+          }}>
+            ✦ Early Bird Bonus: 60 days free AI Decision Partner access
           </p>
           
           <EmailCTA dark />
@@ -746,40 +921,72 @@ export default function App() {
           maxWidth: '600px',
           margin: '0 auto'
         }}>
-          Adapted from approaches used in Fortune 500 boardrooms—simplified for founders who make decisions alone.
+          Combining proven decision frameworks with AI support—designed for founders who make critical choices alone.
         </p>
       </div>
 
       {/* Core Philosophy */}
-      <section style={{ padding: '6rem 4rem', background: '#fff' }}>
-        <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
-          <blockquote style={{
-            fontFamily: "'Cormorant Garamond', serif",
-            fontSize: 'clamp(1.5rem, 3vw, 2rem)',
-            fontStyle: 'italic',
-            lineHeight: 1.6,
-            color: '#1a1a1a',
-            margin: '0 0 2rem'
+      <section className="section-padding" style={{ padding: '5rem 4rem', background: '#fff' }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+          <div className="philosophy-grid" style={{ 
+            display: 'grid', 
+            gridTemplateColumns: '1fr 1fr', 
+            gap: '3rem',
+            padding: '3rem',
+            background: 'linear-gradient(145deg, rgba(139, 154, 70, 0.05) 0%, rgba(196, 168, 75, 0.03) 100%)',
+            borderRadius: '8px'
           }}>
-            "Your decision can only ever be as good as your best available option."
-          </blockquote>
-          <p style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: '0.95rem',
-            color: '#666',
-            lineHeight: 1.8
-          }}>
-            This single insight changes everything. Most people spend 90% of their energy evaluating options 
-            and only 10% creating them. We flip that ratio. Because choosing between mediocre options—no matter how carefully—still leaves you with a mediocre result.
-          </p>
+            <div>
+              <h3 style={{
+                fontFamily: "'Cormorant Garamond', serif",
+                fontSize: '1.75rem',
+                fontWeight: 500,
+                marginBottom: '1rem',
+                color: '#1a1a1a'
+              }}>Why Process Over Outcome?</h3>
+              <p style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: '0.95rem',
+                lineHeight: 1.8,
+                color: '#555'
+              }}>
+                A good decision can lead to a bad outcome (bad luck). A bad decision can lead to a good outcome (good luck). 
+                You can't control luck—but you can control your process. That's why we measure decision quality by how well you decided, not by what happened after.
+              </p>
+            </div>
+            <div>
+              <h3 style={{
+                fontFamily: "'Cormorant Garamond', serif",
+                fontSize: '1.75rem',
+                fontWeight: 500,
+                marginBottom: '1rem',
+                color: '#1a1a1a'
+              }}>Why Human + AI?</h3>
+              <p style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: '0.95rem',
+                lineHeight: 1.8,
+                color: '#555'
+              }}>
+                You bring what AI can't: real-world context, personal values, creative intuition, and the final call. 
+                AI brings what's hard for humans: structured thinking, bias awareness, tireless analysis, and consistent frameworks. Together, you're better than either alone.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
-      <div className="section-divider" style={{ maxWidth: '1200px', margin: '0 auto' }} />
-
       {/* The Four Steps */}
-      <section style={{ padding: '6rem 4rem', background: '#FAFAF8' }}>
+      <section className="section-padding" style={{ padding: '5rem 4rem', background: '#FAFAF8' }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+          <h2 style={{
+            fontFamily: "'Cormorant Garamond', serif",
+            fontSize: '2rem',
+            fontWeight: 400,
+            marginBottom: '3rem',
+            textAlign: 'center'
+          }}>The Four Steps</h2>
+          
           {[
             {
               num: '01',
@@ -791,90 +998,87 @@ export default function App() {
                 'Set boundaries that focus your energy on what matters',
                 'Recognize when you\'re answering the wrong question entirely'
               ],
-              insight: 'Most strategic failures don\'t come from picking the wrong solution. They come from solving the wrong problem brilliantly.'
+              ai: 'AI helps you stress-test your framing and spot blind spots you might miss.'
             },
             {
               num: '02',
               title: 'Identify Great Options',
               subtitle: 'Give yourself choices actually worth making',
               points: [
-                'Move beyond the obvious two or three options',
+                'Escape the binary trap—decisions aren\'t just yes or no on a single option',
                 'Generate alternatives from safe to bold',
                 'Combine elements from different approaches',
-                'Make sure you have at least one option you\'re excited about'
+                'Find multiple options you\'re excited about—your decision is only as good as your best alternative'
               ],
-              insight: 'If you\'re not excited about any of your options, you haven\'t generated enough of them yet.'
+              ai: 'AI expands your thinking with structured brainstorming and creative prompts.'
             },
             {
               num: '03',
-              title: 'Evaluate with Clarity',
-              subtitle: 'Cut through complexity without getting stuck',
+              title: 'Understand Value Drivers & Risks',
+              subtitle: 'Know what moves the needle—and what could go wrong',
               points: [
-                'Identify which uncertainties actually matter for your decision',
-                'Focus on the 20% of information that drives 80% of the outcome',
-                'Use simple tools to compare options visually',
-                'Know when you have enough information to decide'
+                'Identify the key factors that determine success or failure',
+                'Separate what you know from what remains uncertain',
+                'Understand which risks you can manage and which you must accept',
+                'Focus analysis on variables that actually impact your decision'
               ],
-              insight: 'More analysis doesn\'t always mean better decisions. Sometimes it just means more sophisticated procrastination.'
+              ai: 'AI helps you map uncertainties and structure your information gathering.'
             },
             {
               num: '04',
-              title: 'Make It Happen',
-              subtitle: 'Turn your decision into reality',
+              title: 'Evaluate with Clarity',
+              subtitle: 'Go beyond intuition with proven methods',
               points: [
-                'Build genuine commitment before you start executing',
-                'Identify potential obstacles and plan for them',
-                'Create accountability structures that work for you',
-                'Know when to stay the course vs. when to adapt'
+                'Compare options against your specific success criteria',
+                'Weigh financial and non-financial factors appropriately',
+                'Use simple but powerful tools to see trade-offs clearly',
+                'Know when you have enough clarity to decide confidently'
               ],
-              insight: 'A good decision poorly executed will always lose to a decent decision executed well.'
+              ai: 'AI guides you through structured evaluation and bias checks.'
             }
           ].map((step, i) => (
             <div 
               key={i}
-              data-animate
-              id={`method-step-${i}`}
-              className={isVisible[`method-step-${i}`] ? 'animate-fadeInUp' : ''}
+              className="method-grid"
               style={{ 
-                opacity: isVisible[`method-step-${i}`] ? 1 : 0,
-                marginBottom: i < 3 ? '5rem' : 0,
+                marginBottom: i < 3 ? '4rem' : 0,
                 display: 'grid',
                 gridTemplateColumns: 'auto 1fr',
-                gap: '3rem'
+                gap: '2.5rem'
               }}
             >
-              <span style={{
+              <span className="step-number" style={{
                 fontFamily: "'Cormorant Garamond', serif",
-                fontSize: '6rem',
+                fontSize: '5rem',
                 fontWeight: 300,
                 color: 'rgba(139, 154, 70, 0.15)',
                 lineHeight: 1
               }}>{step.num}</span>
               
               <div>
-                <h2 style={{
+                <h3 style={{
                   fontFamily: "'Cormorant Garamond', serif",
-                  fontSize: '2rem',
+                  fontSize: '1.75rem',
                   fontWeight: 500,
                   marginBottom: '0.5rem',
                   color: '#1a1a1a'
-                }}>{step.title}</h2>
+                }}>{step.title}</h3>
                 
                 <p style={{
                   fontFamily: "'Inter', sans-serif",
                   fontSize: '1rem',
                   color: '#8B9A46',
-                  marginBottom: '1.5rem',
+                  marginBottom: '1.25rem',
                   fontWeight: 500
                 }}>{step.subtitle}</p>
                 
                 <ul style={{
                   fontFamily: "'Inter', sans-serif",
                   fontSize: '0.95rem',
-                  lineHeight: 2,
+                  lineHeight: 1.9,
                   color: '#555',
                   listStyle: 'none',
-                  marginBottom: '1.5rem'
+                  marginBottom: '1.25rem'
                 }}>
                   {step.points.map((point, j) => (
                     <li key={j} style={{ display: 'flex', gap: '0.75rem' }}>
@@ -885,18 +1089,17 @@ export default function App() {
                 </ul>
                 
                 <div style={{
-                  padding: '1.25rem 1.5rem',
+                  padding: '1rem 1.25rem',
                   background: 'rgba(139, 154, 70, 0.08)',
                   borderLeft: '3px solid #8B9A46',
                   borderRadius: '0 4px 4px 0'
                 }}>
                   <p style={{
                     fontFamily: "'Inter', sans-serif",
-                    fontSize: '0.9rem',
-                    fontStyle: 'italic',
+                    fontSize: '0.85rem',
                     color: '#3D4A28'
                   }}>
-                    {step.insight}
+                    <strong>AI Decision Partner:</strong> {step.ai}
                   </p>
                 </div>
               </div>
@@ -906,7 +1109,7 @@ export default function App() {
       </section>
 
       {/* CTA */}
-      <section style={{ padding: '6rem 4rem', background: '#fff', textAlign: 'center' }}>
+      <section className="section-padding" style={{ padding: '5rem 4rem', background: '#fff', textAlign: 'center' }}>
         <h2 style={{
           fontFamily: "'Cormorant Garamond', serif",
           fontSize: '2rem',
@@ -945,10 +1148,10 @@ export default function App() {
         </h1>
       </div>
 
-      {/* AI Co-Pilot Featured */}
-      <section style={{ padding: '6rem 4rem', background: '#fff' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <div style={{
+      {/* AI Decision Partner Featured */}
+      <section className="section-padding" style={{ padding: '5rem 4rem', background: '#fff' }}>
+        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+          <div className="feature-hero-grid" style={{
             display: 'grid',
             gridTemplateColumns: '1fr 1fr',
             gap: '4rem',
@@ -971,26 +1174,49 @@ export default function App() {
                 borderRadius: '2px',
                 marginBottom: '1.5rem'
               }}>
-                Exclusive Feature
+                Core Feature
               </div>
               
               <h2 style={{
                 fontFamily: "'Cormorant Garamond', serif",
-                fontSize: '2.5rem',
+                fontSize: '2.25rem',
                 fontWeight: 500,
                 marginBottom: '1rem',
                 color: '#1a1a1a'
-              }}>AI Decision Co-Pilot</h2>
+              }}>AI Decision Partner</h2>
               
               <p style={{
                 fontFamily: "'Inter', sans-serif",
-                fontSize: '1.05rem',
+                fontSize: '1rem',
                 lineHeight: 1.8,
                 color: '#555',
                 marginBottom: '1.5rem'
               }}>
-                Your personal thinking partner for working through tough choices. Ask questions, explore options, and stress-test your reasoning—available 24/7 through our exclusive web application.
+                Your personal thinking partner for working through tough choices. The Decision Partner guides you through the framework, challenges your assumptions, helps you structure your analysis, and ensures you don't miss critical factors.
               </p>
+              
+              <div style={{
+                padding: '1rem 1.25rem',
+                background: 'rgba(196, 168, 75, 0.1)',
+                borderRadius: '4px',
+                marginBottom: '1.5rem'
+              }}>
+                <p style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: '0.9rem',
+                  color: '#3D4A28',
+                  marginBottom: '0.5rem'
+                }}>
+                  <strong>Early Bird Bonus:</strong> Waitlist members get <strong>60 days free</strong> AI Decision Partner access
+                </p>
+                <p style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: '0.85rem',
+                  color: '#666'
+                }}>
+                  Regular course buyers receive 1 month free. All templates and course updates remain yours forever.
+                </p>
+              </div>
               
               <ul style={{
                 fontFamily: "'Inter', sans-serif",
@@ -1023,7 +1249,7 @@ export default function App() {
                 <div style={{ width: '32px', height: '32px', background: '#3D4A28', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <span style={{ color: '#fff', fontSize: '0.8rem' }}>AI</span>
                 </div>
-                <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '0.9rem', fontWeight: 500 }}>Decision Co-Pilot</span>
+                <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '0.9rem', fontWeight: 500 }}>Decision Partner</span>
               </div>
               
               <div style={{
@@ -1043,66 +1269,96 @@ export default function App() {
       </section>
 
       {/* Other Features Grid */}
-      <section style={{ padding: '6rem 4rem', background: '#FAFAF8' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2rem' }}>
+      <section className="section-padding" style={{ padding: '5rem 4rem', background: '#FAFAF8' }}>
+        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+          <div className="three-col-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2rem' }}>
             {[
               {
-                icon: '📊',
-                title: 'Real Case Study',
-                desc: 'Work through an actual high-stakes decision from start to finish. See exactly how the method applies to a real situation—not a textbook example.',
-                details: ['Complete walkthrough', 'Real data and context', 'Step-by-step analysis']
+                icon: (
+                  <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                    <rect x="8" y="12" width="32" height="24" rx="2" stroke="#3D4A28" strokeWidth="2" fill="none"/>
+                    <path d="M14 22L20 28L34 18" stroke="#8B9A46" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                ),
+                title: 'Practical Case Study',
+                desc: 'Work through a realistic high-stakes decision from start to finish. See exactly how the method applies in a practical scenario.',
+                details: ['Complete walkthrough', 'Realistic scenario', 'Step-by-step']
               },
               {
-                icon: '📋',
+                icon: (
+                  <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                    <rect x="10" y="8" width="28" height="32" rx="2" stroke="#3D4A28" strokeWidth="2" fill="none"/>
+                    <line x1="16" y1="16" x2="32" y2="16" stroke="#8B9A46" strokeWidth="2" strokeLinecap="round"/>
+                    <line x1="16" y1="24" x2="28" y2="24" stroke="#8B9A46" strokeWidth="2" strokeLinecap="round"/>
+                    <line x1="16" y1="32" x2="24" y2="32" stroke="#8B9A46" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                ),
                 title: 'Templates & Worksheets',
-                desc: 'Ready-to-use tools for every step of the process. Stop staring at blank pages and start working through your decisions systematically.',
-                details: ['Scoping worksheets', 'Option generators', 'Evaluation matrices']
+                desc: 'Ready-to-use tools for every step. Stop staring at blank pages and start working through your decisions.',
+                details: ['Scoping worksheets', 'Option generators', 'Evaluation tools']
               },
               {
-                icon: '🎯',
-                title: '10+ Video Modules',
-                desc: 'Comprehensive training covering the complete system. Watch at your own pace, revisit when you need a refresher.',
+                icon: (
+                  <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                    <circle cx="24" cy="24" r="14" stroke="#3D4A28" strokeWidth="2" fill="none"/>
+                    <circle cx="24" cy="24" r="6" fill="#8B9A46"/>
+                    <circle cx="24" cy="24" r="2" fill="#3D4A28"/>
+                  </svg>
+                ),
+                title: 'Video Modules',
+                desc: 'Comprehensive training covering the complete system. Watch at your own pace, revisit when needed.',
                 details: ['Clear explanations', 'Practical examples', 'Actionable takeaways']
               },
               {
-                icon: '💡',
-                title: 'Practical Insights',
-                desc: 'Lessons distilled from corporate risk management and translated for entrepreneurs. No jargon, no fluff—just what works.',
-                details: ['Real-world tested', 'Adapted for founders', 'Immediately applicable']
-              },
-              {
-                icon: '🧠',
+                icon: (
+                  <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                    <path d="M24 8C16 8 12 14 12 20C12 26 16 30 24 38C32 30 36 26 36 20C36 14 32 8 24 8Z" stroke="#3D4A28" strokeWidth="2" fill="none"/>
+                    <path d="M24 16V24M24 28V28.5" stroke="#8B9A46" strokeWidth="2.5" strokeLinecap="round"/>
+                  </svg>
+                ),
                 title: 'Bias Defense Guide',
-                desc: 'Learn to recognize the mental shortcuts that sabotage your decisions—and simple techniques to counter them.',
-                details: ['Common decision traps', 'Recognition patterns', 'Countermeasures']
+                desc: 'Learn to recognize the mental shortcuts that sabotage your decisions—and techniques to counter them.',
+                details: ['Common traps', 'Recognition patterns', 'Countermeasures']
               },
               {
-                icon: '🔄',
+                icon: (
+                  <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                    <path d="M12 36L20 24L28 30L36 12" stroke="#3D4A28" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                    <circle cx="36" cy="12" r="3" fill="#8B9A46"/>
+                  </svg>
+                ),
+                title: 'Valuation Framework',
+                desc: 'How to weigh financial and non-financial factors. Turn fuzzy preferences into clear criteria.',
+                details: ['Financial metrics', 'Non-financial values', 'Trade-off methods']
+              },
+              {
+                icon: (
+                  <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                    <path d="M24 12V24L30 30" stroke="#3D4A28" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <circle cx="24" cy="24" r="14" stroke="#8B9A46" strokeWidth="2" fill="none"/>
+                    <path d="M38 24C38 31.732 31.732 38 24 38" stroke="#C4A84B" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                ),
                 title: 'Lifetime Updates',
-                desc: 'As the course evolves, so does your access. New templates, new case studies, new insights—all included.',
-                details: ['Continuous improvement', 'Community feedback', 'No extra cost']
+                desc: 'As the course evolves, so does your access. New templates, insights, and features—all included.',
+                details: ['Continuous updates', 'New content', 'No extra cost']
               }
             ].map((feature, i) => (
               <div 
                 key={i}
-                data-animate
-                id={`feature-detail-${i}`}
-                className={`feature-card ${isVisible[`feature-detail-${i}`] ? 'animate-fadeInUp' : ''}`}
+                className="feature-card"
                 style={{ 
-                  opacity: isVisible[`feature-detail-${i}`] ? 1 : 0,
-                  animationDelay: `${i * 0.1}s`,
                   padding: '2rem',
                   borderRadius: '4px',
                   border: '1px solid rgba(0,0,0,0.04)'
                 }}
               >
-                <div style={{ fontSize: '2.5rem', marginBottom: '1.5rem' }}>{feature.icon}</div>
+                <div style={{ marginBottom: '1.25rem' }}>{feature.icon}</div>
                 <h3 style={{
                   fontFamily: "'Cormorant Garamond', serif",
-                  fontSize: '1.35rem',
+                  fontSize: '1.3rem',
                   fontWeight: 500,
-                  marginBottom: '1rem',
+                  marginBottom: '0.75rem',
                   color: '#1a1a1a'
                 }}>{feature.title}</h3>
                 <p style={{
@@ -1110,7 +1366,7 @@ export default function App() {
                   fontSize: '0.9rem',
                   lineHeight: 1.7,
                   color: '#666',
-                  marginBottom: '1.25rem'
+                  marginBottom: '1rem'
                 }}>{feature.desc}</p>
                 <ul style={{
                   fontFamily: "'Inter', sans-serif",
@@ -1119,7 +1375,7 @@ export default function App() {
                   listStyle: 'none'
                 }}>
                   {feature.details.map((d, j) => (
-                    <li key={j} style={{ marginBottom: '0.35rem' }}>• {d}</li>
+                    <li key={j} style={{ marginBottom: '0.3rem' }}>• {d}</li>
                   ))}
                 </ul>
               </div>
@@ -1129,7 +1385,7 @@ export default function App() {
       </section>
 
       {/* CTA */}
-      <section style={{ padding: '6rem 4rem', background: '#fff', textAlign: 'center' }}>
+      <section className="section-padding" style={{ padding: '5rem 4rem', background: '#fff', textAlign: 'center' }}>
         <h2 style={{
           fontFamily: "'Cormorant Garamond', serif",
           fontSize: '2rem',
@@ -1164,7 +1420,7 @@ export default function App() {
           marginBottom: '1.5rem',
           color: '#1a1a1a'
         }}>
-          From Chaos to <span style={{ fontStyle: 'italic' }}>Clarity</span>
+          From Confusion to <span style={{ fontStyle: 'italic' }}>Clarity</span>
         </h1>
         
         <p style={{
@@ -1172,35 +1428,75 @@ export default function App() {
           fontSize: '1.15rem',
           lineHeight: 1.8,
           color: '#666',
-          maxWidth: '600px',
+          maxWidth: '650px',
           margin: '0 auto'
         }}>
-          10 modules that take you from overwhelmed by options to confident in your choices.
+          A complete system that takes you from overwhelmed by complexity to confident in your choices—with AI support at every step.
         </p>
       </div>
 
       {/* Module List */}
-      <section style={{ padding: '4rem 4rem 8rem', background: '#fff' }}>
+      <section className="section-padding" style={{ padding: '4rem 4rem 6rem', background: '#fff' }}>
         <div style={{ maxWidth: '900px', margin: '0 auto' }}>
           {[
-            { module: 'Module 1', title: 'Which Decisions Matter?', desc: 'Not every choice deserves the same effort. Learn to quickly categorize decisions and allocate your energy accordingly.', duration: '~20 min', outcomes: ['Distinguish quick calls from strategic decisions', 'Stop overthinking small choices', 'Focus your energy where it counts'] },
-            { module: 'Module 2', title: 'Setting the Right Scope', desc: 'Before solving anything, make sure you\'re working on what actually matters. Define boundaries that focus your decision.', duration: '~35 min', outcomes: ['Define what\'s really at stake', 'Avoid scope creep', 'Frame decisions for clarity'] },
-            { module: 'Module 3', title: 'What Are You Missing?', desc: 'A systematic approach to uncovering blind spots. Make sure you\'re not overlooking something critical.', duration: '~30 min', outcomes: ['Surface hidden assumptions', 'Identify key uncertainties', 'Gather the right perspectives'] },
-            { module: 'Module 4', title: 'Creating Better Options', desc: 'Your best decision can only be as good as your best option. Learn to generate alternatives worth choosing from.', duration: '~40 min', outcomes: ['Move beyond obvious choices', 'Generate options from safe to bold', 'Combine elements creatively'] },
-            { module: 'Module 5', title: 'Information That Matters', desc: 'Not all data is equal. Learn to identify the 20% of information that drives 80% of your decision.', duration: '~30 min', outcomes: ['Prioritize information gathering', 'Know when you have enough', 'Stop analysis paralysis'] },
-            { module: 'Module 6', title: 'Knowing What Success Looks Like', desc: 'Define your criteria before emotions and pressure kick in. Get clear on what you\'re actually optimizing for.', duration: '~25 min', outcomes: ['Clarify what matters most', 'Handle conflicting priorities', 'Make trade-offs explicitly'] },
-            { module: 'Module 7', title: 'Tools for Thinking Clearly', desc: 'Simple, practical methods for comparing options and handling uncertainty. No spreadsheet wizardry required.', duration: '~45 min', outcomes: ['Visualize trade-offs clearly', 'Handle uncertainty practically', 'Use simple but powerful tools'] },
-            { module: 'Module 8', title: 'Outsmarting Your Own Brain', desc: 'Recognize the mental shortcuts that sabotage decisions—and learn simple techniques to counter them.', duration: '~35 min', outcomes: ['Spot common decision traps', 'Counter your own biases', 'Build better decision habits'] },
-            { module: 'Module 9', title: 'Putting It All Together', desc: 'Work through a complete case study from start to finish. See exactly how all the pieces fit together.', duration: '~50 min', outcomes: ['Apply the full method', 'See real-world application', 'Build confidence through practice'] },
-            { module: 'Module 10', title: 'From Decision to Action', desc: 'The gap between deciding and doing. Build commitment and create conditions for follow-through.', duration: '~30 min', outcomes: ['Build genuine commitment', 'Plan for obstacles', 'Make execution inevitable'] }
+            { 
+              label: 'Mindset', 
+              title: 'Why Process Over Outcome', 
+              desc: 'Why should decision quality be measured by your process, not your results? Learn why good decisions can lead to bad outcomes (and vice versa)—and why this insight is liberating, not frustrating.',
+              outcomes: ['Understand decision quality', 'Separate skill from luck', 'Learn from decisions properly']
+            },
+            { 
+              label: 'Foundation', 
+              title: 'Clarity About Your Decision', 
+              desc: 'How do you start with the right problem and the right scope? Learn to define what\'s really at stake, who needs to be involved, and where the boundaries of your decision should be. Because solving the wrong problem brilliantly still leads to failure.',
+              outcomes: ['Define the real problem', 'Set clear boundaries', 'Avoid scope traps']
+            },
+            { 
+              label: 'Exploration', 
+              title: 'What Could You Do?', 
+              desc: 'What meaningful alternatives exist that actually move you toward your goal? Learn to generate options beyond the obvious—from safe bets to bold moves. Your decision can only ever be as good as your best alternative.',
+              outcomes: ['Generate rich alternatives', 'Think beyond the obvious', 'Create options worth choosing']
+            },
+            { 
+              label: 'Insight', 
+              title: 'What Do You Know—And What Don\'t You?', 
+              desc: 'What information do you have, what do you need, what can you get, and what will remain uncertain? Learn to identify your key value drivers and the risks that come from unavoidable unknowns.',
+              outcomes: ['Map your information landscape', 'Identify value drivers', 'Understand residual risks']
+            },
+            { 
+              label: 'Values', 
+              title: 'How Do You Measure Value?', 
+              desc: 'How do you compare your options? Learn to weigh both financial factors (profit, NPV, costs) and non-financial ones (time freedom, relationships, personal fulfillment)—and how to make trade-offs when they conflict.',
+              outcomes: ['Define success criteria', 'Balance financial & non-financial', 'Make trade-offs explicit']
+            },
+            { 
+              label: 'Evaluation', 
+              title: 'Which Option Is Best—And Can It Be Better?', 
+              desc: 'Given everything you\'ve learned, which option creates the most value? And once you\'ve identified it—can you improve it further? Learn to refine your best alternative into something even better.',
+              outcomes: ['Compare options clearly', 'Identify the best path', 'Optimize your choice']
+            },
+            { 
+              label: 'Action', 
+              title: 'What Are The Next Steps?', 
+              desc: 'How do you turn your decision into action? Learn to create clear implementation plans, build genuine commitment, and set up conditions that make follow-through inevitable.',
+              outcomes: ['Create action plans', 'Build commitment', 'Ensure follow-through']
+            },
+            { 
+              label: 'Awareness', 
+              title: 'The Biases Working Against You', 
+              desc: 'What mental shortcuts sabotage your decisions without you noticing? Learn to recognize cognitive biases like overconfidence, confirmation bias, and anchoring—and practical techniques to counter them.',
+              outcomes: ['Spot cognitive traps', 'Recognize your blind spots', 'Apply countermeasures']
+            },
+            { 
+              label: 'Synergy', 
+              title: 'The Human + AI Advantage', 
+              desc: 'How do you create the perfect synergy between human judgment and AI support? Learn when to rely on your intuition, when to lean on AI, and how to combine both for decisions better than either could make alone.',
+              outcomes: ['Leverage AI effectively', 'Know when to trust yourself', 'Combine strengths optimally']
+            }
           ].map((item, i) => (
             <div 
               key={i}
-              data-animate
-              id={`curriculum-item-${i}`}
-              className={isVisible[`curriculum-item-${i}`] ? 'animate-fadeInUp' : ''}
               style={{ 
-                opacity: isVisible[`curriculum-item-${i}`] ? 1 : 0,
                 padding: '2.5rem',
                 marginBottom: '1.5rem',
                 background: '#FAFAF8',
@@ -1208,12 +1504,9 @@ export default function App() {
                 border: '1px solid rgba(0,0,0,0.04)'
               }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
-                <div>
-                  <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '0.7rem', letterSpacing: '0.2em', color: '#8B9A46', textTransform: 'uppercase' }}>{item.module}</span>
-                  <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.5rem', fontWeight: 500, marginTop: '0.5rem', color: '#1a1a1a' }}>{item.title}</h3>
-                </div>
-                <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '0.8rem', color: '#888' }}>{item.duration}</span>
+              <div style={{ marginBottom: '1rem' }}>
+                <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '0.7rem', letterSpacing: '0.2em', color: '#8B9A46', textTransform: 'uppercase' }}>{item.label}</span>
+                <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.5rem', fontWeight: 500, marginTop: '0.5rem', color: '#1a1a1a' }}>{item.title}</h3>
               </div>
               
               <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '0.95rem', lineHeight: 1.7, color: '#666', marginBottom: '1.25rem' }}>{item.desc}</p>
@@ -1230,26 +1523,8 @@ export default function App() {
         </div>
       </section>
 
-      {/* Stats */}
-      <section style={{ padding: '4rem', background: '#FAFAF8' }}>
-        <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '4rem', marginBottom: '2rem' }}>
-            {[
-              { num: '10+', label: 'Video Modules' },
-              { num: '~6h', label: 'Total Content' },
-              { num: '15+', label: 'Templates' }
-            ].map((stat, i) => (
-              <div key={i}>
-                <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '2.5rem', fontWeight: 500, color: '#3D4A28' }}>{stat.num}</div>
-                <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '0.85rem', color: '#666' }}>{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* CTA */}
-      <section style={{ padding: '6rem 4rem', background: '#fff', textAlign: 'center' }}>
+      <section className="section-padding" style={{ padding: '5rem 4rem', background: '#fff', textAlign: 'center' }}>
         <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '2rem', fontWeight: 400, marginBottom: '2rem' }}>
           Ready to master decision-making?
         </h2>
@@ -1267,6 +1542,8 @@ export default function App() {
       minHeight: '100vh'
     }}>
       <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Livvic:wght@300;400;500;600;700&display=swap');
+        
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         ::selection { background: #8B9A46; color: white; }
@@ -1368,9 +1645,155 @@ export default function App() {
         }
         
         .page-header {
-          padding: 12rem 4rem 6rem;
+          padding: 10rem 4rem 5rem;
           background: linear-gradient(180deg, #FAFAF8 0%, #F5F5F0 100%);
           text-align: center;
+        }
+        
+        /* Mobile Responsive Styles */
+        @media (max-width: 1024px) {
+          .hero-grid { grid-template-columns: 1fr !important; }
+          .two-col-grid { grid-template-columns: 1fr !important; }
+          .three-col-grid { grid-template-columns: 1fr 1fr !important; }
+          .four-col-grid { grid-template-columns: 1fr 1fr !important; }
+        }
+        
+        @media (max-width: 768px) {
+          .nav-desktop { display: none !important; }
+          .nav-mobile { display: flex !important; }
+          
+          .page-header {
+            padding: 7rem 1.5rem 3rem !important;
+          }
+          
+          .section-padding {
+            padding: 3rem 1.5rem !important;
+          }
+          
+          .hero-section {
+            padding: 6rem 1.5rem 3rem !important;
+            min-height: auto !important;
+          }
+          
+          .hero-grid { 
+            grid-template-columns: 1fr !important; 
+            gap: 2rem !important;
+          }
+          
+          .two-col-grid { 
+            grid-template-columns: 1fr !important; 
+            gap: 1.5rem !important;
+          }
+          
+          .three-col-grid { 
+            grid-template-columns: 1fr !important; 
+            gap: 1.5rem !important;
+          }
+          
+          .four-col-grid { 
+            grid-template-columns: 1fr 1fr !important; 
+            gap: 1rem !important;
+          }
+          
+          .step-number {
+            font-size: 3rem !important;
+          }
+          
+          .method-grid {
+            grid-template-columns: 1fr !important;
+            gap: 1rem !important;
+          }
+          
+          .feature-hero-grid {
+            grid-template-columns: 1fr !important;
+          }
+          
+          .floating-badge {
+            position: relative !important;
+            top: auto !important;
+            right: auto !important;
+            margin-top: 1rem !important;
+            display: inline-block !important;
+          }
+          
+          .decorative-circle {
+            display: none !important;
+          }
+          
+          .footer-grid {
+            flex-direction: column !important;
+            text-align: center !important;
+          }
+          
+          .footer-links {
+            justify-content: center !important;
+          }
+          
+          .footer-bottom {
+            flex-direction: column !important;
+            text-align: center !important;
+            gap: 1.5rem !important;
+          }
+          
+          .footer-bottom > div {
+            text-align: center !important;
+          }
+          
+          .cta-form {
+            flex-direction: column !important;
+          }
+          
+          .cta-form input {
+            width: 100% !important;
+            min-height: auto !important;
+            height: auto !important;
+            padding: 0.875rem 1rem !important;
+            font-size: 1rem !important;
+            flex: none !important;
+          }
+          
+          .cta-form button {
+            width: 100% !important;
+            padding: 1rem 1.5rem !important;
+          }
+          
+          .footer-bottom {
+            flex-direction: column !important;
+            text-align: center !important;
+            align-items: center !important;
+            gap: 1.5rem !important;
+          }
+          
+          .impressum-section {
+            text-align: center !important;
+            width: 100% !important;
+          }
+          
+          .impressum-section p {
+            text-align: center !important;
+          }
+          
+          .copyright-text {
+            text-align: center !important;
+          }
+          
+          .philosophy-grid {
+            grid-template-columns: 1fr !important;
+          }
+          
+          .site-footer {
+            padding: 2rem 1.5rem !important;
+          }
+        }
+        
+        @media (max-width: 480px) {
+          .four-col-grid { 
+            grid-template-columns: 1fr !important; 
+          }
+          
+          .nav-mobile-logo {
+            font-size: 14px !important;
+          }
         }
       `}</style>
       

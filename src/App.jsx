@@ -3,6 +3,96 @@ import { useState, useEffect } from 'react';
 // Formspree configuration
 const FORMSPREE_URL = 'https://formspree.io/f/xanrbdzy';
 
+// Email CTA Component - defined outside App to prevent re-creation on state changes
+const EmailCTA = ({ dark = false, email, setEmail, formState, handleSubmit }) => (
+  <div style={{ maxWidth: '500px', margin: '0 auto' }}>
+    {formState === 'success' ? (
+      <div style={{
+        padding: '2rem',
+        background: 'rgba(139, 154, 70, 0.1)',
+        borderRadius: '4px',
+        border: '1px solid rgba(139, 154, 70, 0.3)',
+        textAlign: 'center'
+      }}>
+        <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '1.1rem', color: '#8B9A46' }}>
+          ✓ You're on the list. We'll be in touch soon.
+        </p>
+      </div>
+    ) : (
+      <form onSubmit={handleSubmit} className="cta-form" style={{
+        display: 'flex',
+        gap: '1rem',
+        flexWrap: 'wrap',
+        justifyContent: 'center'
+      }}>
+        <input
+          type="email"
+          name="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Enter your email"
+          required
+          disabled={formState === 'submitting'}
+          style={{
+            flex: '1 1 280px',
+            padding: '1.25rem 1.5rem',
+            fontFamily: "'Inter', sans-serif",
+            fontSize: '1rem',
+            background: dark ? 'rgba(255,255,255,0.05)' : '#fff',
+            border: dark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.1)',
+            borderRadius: '2px',
+            color: dark ? '#fff' : '#1a1a1a',
+            opacity: formState === 'submitting' ? 0.7 : 1
+          }}
+        />
+        <button 
+          type="submit" 
+          className="cta-button" 
+          disabled={formState === 'submitting'}
+          style={{
+            padding: '1.25rem 2.5rem',
+            fontFamily: "'Inter', sans-serif",
+            fontSize: '0.9rem',
+            fontWeight: 600,
+            letterSpacing: '0.05em',
+            color: '#1a1a1a',
+            border: 'none',
+            borderRadius: '2px',
+            cursor: formState === 'submitting' ? 'wait' : 'pointer',
+            opacity: formState === 'submitting' ? 0.7 : 1
+          }}
+        >
+          {formState === 'submitting' ? 'Joining...' : 'Get Early Access'}
+        </button>
+      </form>
+    )}
+    
+    {formState === 'error' && (
+      <p style={{
+        fontFamily: "'Inter', sans-serif",
+        fontSize: '0.85rem',
+        color: '#c44',
+        marginTop: '1rem',
+        textAlign: 'center'
+      }}>
+        Something went wrong. Please try again.
+      </p>
+    )}
+    
+    {formState !== 'success' && formState !== 'error' && (
+      <p style={{
+        fontFamily: "'Inter', sans-serif",
+        fontSize: '0.8rem',
+        color: dark ? 'rgba(255,255,255,0.4)' : '#888',
+        marginTop: '1rem',
+        textAlign: 'center'
+      }}>
+        No spam. Unsubscribe anytime.
+      </p>
+    )}
+  </div>
+);
+
 export default function App() {
   const [currentPage, setCurrentPage] = useState('home');
   const [email, setEmail] = useState('');
@@ -303,96 +393,6 @@ export default function App() {
         </div>
       </div>
     </footer>
-  );
-
-  // Email CTA Component with Formspree
-  const EmailCTA = ({ dark = false }) => (
-    <div style={{ maxWidth: '500px', margin: '0 auto' }}>
-      {formState === 'success' ? (
-        <div style={{
-          padding: '2rem',
-          background: 'rgba(139, 154, 70, 0.1)',
-          borderRadius: '4px',
-          border: '1px solid rgba(139, 154, 70, 0.3)',
-          textAlign: 'center'
-        }}>
-          <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '1.1rem', color: '#8B9A46' }}>
-            ✓ You're on the list. We'll be in touch soon.
-          </p>
-        </div>
-      ) : (
-        <form onSubmit={handleSubmit} className="cta-form" style={{
-          display: 'flex',
-          gap: '1rem',
-          flexWrap: 'wrap',
-          justifyContent: 'center'
-        }}>
-          <input
-            type="email"
-            name="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter your email"
-            required
-            disabled={formState === 'submitting'}
-            style={{
-              flex: '1 1 280px',
-              padding: '1.25rem 1.5rem',
-              fontFamily: "'Inter', sans-serif",
-              fontSize: '1rem',
-              background: dark ? 'rgba(255,255,255,0.05)' : '#fff',
-              border: dark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.1)',
-              borderRadius: '2px',
-              color: dark ? '#fff' : '#1a1a1a',
-              opacity: formState === 'submitting' ? 0.7 : 1
-            }}
-          />
-          <button 
-            type="submit" 
-            className="cta-button" 
-            disabled={formState === 'submitting'}
-            style={{
-              padding: '1.25rem 2.5rem',
-              fontFamily: "'Inter', sans-serif",
-              fontSize: '0.9rem',
-              fontWeight: 600,
-              letterSpacing: '0.05em',
-              color: '#1a1a1a',
-              border: 'none',
-              borderRadius: '2px',
-              cursor: formState === 'submitting' ? 'wait' : 'pointer',
-              opacity: formState === 'submitting' ? 0.7 : 1
-            }}
-          >
-            {formState === 'submitting' ? 'Joining...' : 'Get Early Access'}
-          </button>
-        </form>
-      )}
-      
-      {formState === 'error' && (
-        <p style={{
-          fontFamily: "'Inter', sans-serif",
-          fontSize: '0.85rem',
-          color: '#c44',
-          marginTop: '1rem',
-          textAlign: 'center'
-        }}>
-          Something went wrong. Please try again.
-        </p>
-      )}
-      
-      {formState !== 'success' && formState !== 'error' && (
-        <p style={{
-          fontFamily: "'Inter', sans-serif",
-          fontSize: '0.8rem',
-          color: dark ? 'rgba(255,255,255,0.4)' : '#888',
-          marginTop: '1rem',
-          textAlign: 'center'
-        }}>
-          No spam. Unsubscribe anytime.
-        </p>
-      )}
-    </div>
   );
 
   // ==================== HOME PAGE ====================
@@ -883,7 +883,7 @@ export default function App() {
             ✦ Early Bird Bonus: 60 days free AI Decision Partner access
           </p>
           
-          <EmailCTA dark />
+          <EmailCTA dark email={email} setEmail={setEmail} formState={formState} handleSubmit={handleSubmit} />
         </div>
       </section>
     </>
@@ -1118,7 +1118,7 @@ export default function App() {
         }}>
           Ready to learn the complete system?
         </h2>
-        <EmailCTA />
+        <EmailCTA email={email} setEmail={setEmail} formState={formState} handleSubmit={handleSubmit} />
       </section>
     </>
   );
@@ -1394,7 +1394,7 @@ export default function App() {
         }}>
           Get access to all features
         </h2>
-        <EmailCTA />
+        <EmailCTA email={email} setEmail={setEmail} formState={formState} handleSubmit={handleSubmit} />
       </section>
     </>
   );
@@ -1528,7 +1528,7 @@ export default function App() {
         <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '2rem', fontWeight: 400, marginBottom: '2rem' }}>
           Ready to master decision-making?
         </h2>
-        <EmailCTA />
+        <EmailCTA email={email} setEmail={setEmail} formState={formState} handleSubmit={handleSubmit} />
       </section>
     </>
   );
